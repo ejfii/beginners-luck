@@ -25,6 +25,79 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
 
   const [isSaving, setIsSaving] = useState(false);
   const [toast, setToast] = useState({ visible: false, message: '', type: 'info' });
+  const [showTemplateSaveModal, setShowTemplateSaveModal] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [templateDescription, setTemplateDescription] = useState('');
+
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
+
+  const getAxiosConfig = () => ({
+    headers: { Authorization: `Bearer ${token}` }
+  });
+
+  const handleSaveAsTemplate = () => {
+    setTemplateName(`Template: ${negotiation.name}`);
+    setTemplateDescription('');
+    setShowTemplateSaveModal(true);
+  };
+
+  const handleConfirmSaveTemplate = async (e) => {
+    e.preventDefault();
+    
+    if (!templateName.trim()) {
+      setToast({ visible: true, message: 'Template name is required', type: 'error' });
+      return;
+    }
+
+    // Prepare template data - include key fields but exclude case-specific info
+    const templateData = {
+      plaintiff_attorney: negotiation.plaintiff_attorney,
+      defendant_attorney: negotiation.defendant_attorney,
+      mediator: negotiation.mediator,
+      venue: negotiation.venue,
+      judge: negotiation.judge,
+      coverage: negotiation.coverage,
+      primary_coverage_limit: negotiation.primary_coverage_limit,
+      primary_insurer_name: negotiation.primary_insurer_name,
+      primary_adjuster_name: negotiation.primary_adjuster_name,
+      umbrella_coverage_limit: negotiation.umbrella_coverage_limit,
+      umbrella_insurer_name: negotiation.umbrella_insurer_name,
+      umbrella_adjuster_name: negotiation.umbrella_adjuster_name,
+      uim_coverage_limit: negotiation.uim_coverage_limit,
+      uim_insurer_name: negotiation.uim_insurer_name,
+      uim_adjuster_name: negotiation.uim_adjuster_name,
+      defendant_type: negotiation.defendant_type,
+      // Include parties if available
+      parties: negotiation.parties || []
+    };
+
+    try {
+      const response = await fetch(`${API_BASE_URL}/templates`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          name: templateName.trim(),
+          description: templateDescription.trim() || null,
+          template_data: templateData
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save template');
+      }
+
+      setShowTemplateSaveModal(false);
+      setTemplateName('');
+      setTemplateDescription('');
+      setToast({ visible: true, message: 'Template saved successfully!', type: 'success' });
+    } catch (error) {
+      console.error('Error saving template:', error);
+      setToast({ visible: true, message: 'Failed to save template', type: 'error' });
+    }
+  };
 
   const handleSaveEdit = () => {
     setIsSaving(true);
@@ -98,6 +171,9 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
             {negotiation.status === 'settled' ? 'Reopen Case' : 'Mark Settled'}
           </button>
           <PdfExport negotiation={negotiation} />
+          <button className="btn btn-secondary" onClick={handleSaveAsTemplate} title="Save as template for reuse">
+            💾 Save as Template
+          </button>
           <button className="btn btn-secondary" onClick={() => setIsEditing(!isEditing)}>
             {isEditing ? 'Cancel Edit' : 'Edit Details'}
           </button>
@@ -619,6 +695,57 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
       <MediatorProposal negotiationId={negotiation.id} token={token} />
 
       <AnalyticsDashboard analytics={negotiation.analytics} moves={negotiation.moves} negotiation={negotiation} />
+
+      {/* Save as Template Modal */}
+      {showTemplateSaveModal && (
+        <div className="modal-overlay" onClick={() => setShowTemplateSaveModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3>Save as Template</h3>
+            <p className="modal-subtitle">
+              Create a reusable template from this case's configuration. The template will include parties, coverage details, and case type.
+            </p>
+            
+            <form onSubmit={handleConfirmSaveTemplate}>
+              <div className="form-group">
+                <label htmlFor="templateName">Template Name *</label>
+                <input
+                  id="templateName"
+                  type="text"
+                  value={templateName}
+                  onChange={(e) => setTemplateName(e.target.value)}
+                  placeholder="e.g., Auto Accident - State Farm"
+                  required
+                  autoFocus
+                />
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="templateDescription">Description (Optional)</label>
+                <textarea
+                  id="templateDescription"
+                  value={templateDescription}
+                  onChange={(e) => setTemplateDescription(e.target.value)}
+                  placeholder="Brief description of when to use this template..."
+                  rows="3"
+                />
+              </div>
+
+              <div className="modal-actions">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowTemplateSaveModal(false)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn btn-primary">
+                  Save Template
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

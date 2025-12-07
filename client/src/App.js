@@ -6,6 +6,7 @@ import NegotiationForm from './components/NegotiationForm';
 import NegotiationDetail from './components/NegotiationDetail';
 import MediationView from './components/MediationView';
 import SearchFilter from './components/SearchFilter';
+import TemplateManager from './components/TemplateManager';
 import './styles/App.css';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   const [selectedNegotiation, setSelectedNegotiation] = useState(null);
   const [showForm, setShowForm] = useState(false);
   const [showMediationView, setShowMediationView] = useState(false);
+  const [showTemplates, setShowTemplates] = useState(false);
   const [filteredNegotiations, setFilteredNegotiations] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -250,6 +252,13 @@ function App() {
                 {showForm ? '✕ Cancel' : '+ New'}
               </button>
               <button 
+                className="btn btn-secondary"
+                onClick={() => setShowTemplates(!showTemplates)}
+                title="Manage templates"
+              >
+                📋
+              </button>
+              <button 
                 className="btn btn-logout"
                 onClick={handleLogout}
                 title="Logout"
@@ -277,7 +286,17 @@ function App() {
             {sidebarOpen ? '◀' : '▶'}
           </button>
 
-          {showMediationView && selectedNegotiation ? (
+          {showTemplates ? (
+            <TemplateManager
+              token={token}
+              onCreateFromTemplate={(negotiation) => {
+                setShowTemplates(false);
+                fetchNegotiations();
+                setSelectedNegotiation(negotiation);
+              }}
+              onClose={() => setShowTemplates(false)}
+            />
+          ) : showMediationView && selectedNegotiation ? (
             <MediationView
               negotiationId={selectedNegotiation.id}
               negotiation={selectedNegotiation}

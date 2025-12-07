@@ -13,6 +13,7 @@ const searchRouter = require('./routes/search');
 const bracketsRouter = require('./routes/brackets');
 const mediatorRouter = require('./routes/mediator');
 const analyticsRouter = require('./routes/analytics');
+const templatesRouter = require('./routes/templates');
 
 // Initialize database
 db.initializeDatabase();
@@ -44,6 +45,7 @@ app.use('/api/search', searchRouter);
 app.use('/api/analytics', analyticsRouter); // Insurer and adjuster analytics
 app.use('/api/brackets', bracketsRouter); // For direct bracket updates
 app.use('/api/mediator-proposals', mediatorRouter); // For utility endpoints
+app.use('/api/templates', templatesRouter); // Negotiation templates
 
 // 404 handler
 app.use((req, res) => {

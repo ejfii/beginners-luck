@@ -351,6 +351,32 @@ function initializeDatabase(callback) {
 
       db.run('CREATE INDEX IF NOT EXISTS idx_mediator_proposals_negotiation_id ON mediator_proposals(negotiation_id)', (err) => {
         if (err) console.error('Error creating index on mediator_proposals.negotiation_id:', err);
+      });
+    });
+
+    // Templates table - Save negotiation configurations for reuse
+    db.run(`
+      CREATE TABLE IF NOT EXISTS templates (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        name TEXT NOT NULL,
+        description TEXT,
+        template_data TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+      )
+    `, (err) => {
+      if (err) {
+        console.error('Error creating templates table:', err);
+      }
+
+      db.run('CREATE INDEX IF NOT EXISTS idx_templates_user_id ON templates(user_id)', (err) => {
+        if (err) console.error('Error creating index on templates.user_id:', err);
+      });
+
+      db.run('CREATE INDEX IF NOT EXISTS idx_mediator_proposals_negotiation_id ON mediator_proposals(negotiation_id)', (err) => {
+        if (err) console.error('Error creating index on mediator_proposals.negotiation_id:', err);
         
         // Call callback after the last table/index is created
         if (callback) callback();
@@ -777,6 +803,144 @@ function checkExpiredProposals(callback) {
   );
 }
 
+/**
+ * Create a new template from negotiation data
+ */
+function createTemplate(templateData, callback) {
+  const db = getConnection();
+  const { user_id, name, description, template_data } = templateData;
+  const now = new Date().toISOString();
+
+  db.run(
+    `INSERT INTO templates (user_id, name, description, template_data, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    [user_id, name, description || null, JSON.stringify(template_data), now, now],
+    function(err) {
+      if (err) {
+        callback(err, null);
+      } else {
+        callback(null, {
+          id: this.lastID,
+          user_id,
+          name,
+          description,
+          template_data,
+          created_at: now,
+          updated_at: now
+        });
+      }
+    }
+  );
+}
+
+/**
+ * Get all templates for a user
+ */
+function getTemplatesByUser(userId, callback) {
+  const db = getConnection();
+  
+  db.all(
+    `SELECT id, user_id, name, description, template_data, created_at, updated_at
+     FROM templates
+     WHERE user_id = ?
+     ORDER BY updated_at DESC`,
+    [userId],
+    (err, rows) => {
+      if (err) {
+        callback(err, null);
+      } else {
+        // Parse template_data JSON for each row
+        const templates = rows.map(row => ({
+          ...row,
+          template_data: JSON.parse(row.template_data)
+        }));
+        callback(null, templates);
+      }
+    }
+  );
+}
+
+/**
+ * Get template by ID
+ */
+function getTemplateById(templateId, userId, callback) {
+  const db = getConnection();
+  
+  db.get(
+    `SELECT id, user_id, name, description, template_data, created_at, updated_at
+     FROM templates
+     WHERE id = ? AND user_id = ?`,
+    [templateId, userId],
+    (err, row) => {
+      if (err) {
+        callback(err, null);
+      } else if (!row) {
+        callback(null, null);
+      } else {
+        callback(null, {
+          ...row,
+          template_data: JSON.parse(row.template_data)
+        });
+      }
+    }
+  );
+}
+
+/**
+ * Update template
+ */
+function updateTemplate(templateId, userId, updates, callback) {
+  const db = getConnection();
+  const { name, description, template_data } = updates;
+  const now = new Date().toISOString();
+
+  let query = 'UPDATE templates SET updated_at = ?';
+  let params = [now];
+
+  if (name !== undefined) {
+    query += ', name = ?';
+    params.push(name);
+  }
+  if (description !== undefined) {
+    query += ', description = ?';
+    params.push(description);
+  }
+  if (template_data !== undefined) {
+    query += ', template_data = ?';
+    params.push(JSON.stringify(template_data));
+  }
+
+  query += ' WHERE id = ? AND user_id = ?';
+  params.push(templateId, userId);
+
+  db.run(query, params, function(err) {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, { changes: this.changes });
+    }
+  });
+}
+
+/**
+ * Delete template
+ */
+function deleteTemplate(templateId, userId, callback) {
+  const db = getConnection();
+  
+  db.run(
+    'DELETE FROM templates WHERE id = ? AND user_id = ?',
+    [templateId, userId],
+    function(err) {
+      if (err) {
+        callback(err);
+      } else {
+        callback(null, { changes: this.changes });
+      }
+    }
+  );
+}
+
 module.exports = {
   initializeDatabase,
   getConnection,
@@ -805,6 +969,11 @@ module.exports = {
   getMediatorProposal,
   updateMediatorProposal,
   checkExpiredProposals,
+  createTemplate,
+  getTemplatesByUser,
+  getTemplateById,
+  updateTemplate,
+  deleteTemplate,
   closeConnection: () => {
     if (dbConnection) {
       dbConnection.close();
