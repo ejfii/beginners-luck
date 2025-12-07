@@ -1,0 +1,95 @@
+.analytics-dashboard {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.analytics-dashboard h3 {
+  margin: 0 0 20px 0;
+  color: #1F2937;
+  font-size: 16px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+}
+
+.metric-card {
+  background: white;
+  padding: 15px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  border-left: 4px solid #FCD34D;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.metric-card h4 {
+  margin: 0;
+  color: #666;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+.metric-description {
+  margin: 0;
+  font-size: 12px;
+  color: #999;
+}
+
+.metric-card.momentum-positive {
+  border-left-color: #28a745;
+}
+
+.metric-card.momentum-positive .metric-value {
+  color: #28a745;
+}
+
+.metric-card.momentum-neutral {
+  border-left-color: #ffc107;
+}
+
+.metric-card.momentum-neutral .metric-value {
+  color: #f39c12;
+}
+
+.metric-card.momentum-negative {
+  border-left-color: #dc3545;
+}
+
+.metric-card.momentum-negative .metric-value {
+  color: #dc3545;
+}
+
+.metric-card.confidence-high {
+  border-left-color: #28a745;
+}
+
+.metric-card.confidence-medium {
+  border-left-color: #ffc107;
+}
+
+.metric-card.confidence-low {
+  border-left-color: #dc3545;
+}
+
+@media (max-width: 768px) {
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .metric-value {
+    font-size: 16px;
+  }
+}

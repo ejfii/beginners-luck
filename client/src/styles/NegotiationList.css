@@ -1,0 +1,68 @@
+.negotiation-list h3 {
+  padding: 15px;
+  margin: 0;
+  font-size: 16px;
+  border-bottom: 1px solid #eee;
+  color: #1F2937;
+}
+
+.negotiation-list ul {
+  list-style: none;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.negotiation-item {
+  padding: 12px 15px;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+  transition: all 0.2s ease;
+}
+
+.negotiation-item:hover {
+  background: #f9f9f9;
+  border-left: 3px solid #FCD34D;
+  padding-left: 12px;
+}
+
+.negotiation-item.selected {
+  background: #FFFBEB;
+  border-left: 3px solid #FCD34D;
+  padding-left: 12px;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.item-header strong {
+  flex: 1;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.item-header .status-badge {
+  margin-left: 8px;
+  flex-shrink: 0;
+}
+
+.negotiation-item small {
+  display: block;
+  color: #999;
+  font-size: 12px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.empty-message {
+  padding: 20px 15px;
+  text-align: center;
+  color: #999;
+  font-size: 14px;
+}

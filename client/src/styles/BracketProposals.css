@@ -1,0 +1,436 @@
+.bracket-proposals {
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  margin-top: 20px;
+}
+
+.bracket-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.bracket-header h3 {
+  margin: 0;
+  color: #1F2937;
+  font-size: 18px;
+}
+
+.bracket-header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-suggestion {
+  background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 100%);
+  color: #1F2937;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 14px;
+}
+
+.btn-suggestion:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(252, 211, 77, 0.4);
+}
+
+.btn-suggestion:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.bracket-form {
+  background: white;
+  padding: 20px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+.bracket-form .form-section {
+  margin-bottom: 20px;
+}
+
+.bracket-form .form-section h4 {
+  margin: 0 0 10px 0;
+  color: #1F2937;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.suggestion-reasoning {
+  background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 100%);
+  border: 2px solid #FCD34D;
+  border-radius: 6px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.suggestion-reasoning strong {
+  color: #1F2937;
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.suggestion-reasoning p {
+  margin: 0;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.bracket-form .form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.bracket-form .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.bracket-form .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.bracket-form label {
+  font-weight: 600;
+  margin-bottom: 5px;
+  font-size: 13px;
+  color: #333;
+}
+
+.bracket-form input,
+.bracket-form textarea {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.bracket-form input:focus,
+.bracket-form textarea:focus {
+  outline: none;
+  border-color: #FCD34D;
+  box-shadow: 0 0 0 3px rgba(252, 211, 77, 0.2);
+}
+
+.bracket-form .input-error {
+  color: #dc3545;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.bracket-form .input-hint {
+  color: #666;
+  font-size: 11px;
+  margin-top: 4px;
+  font-style: italic;
+}
+
+.brackets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.bracket-item {
+  background: white;
+  border-radius: 6px;
+  border: 2px solid #ddd;
+  padding: 15px;
+  transition: all 0.2s ease;
+}
+
+.bracket-item.bracket-active {
+  border-color: #FCD34D;
+}
+
+.bracket-item.bracket-accepted {
+  border-color: #28a745;
+  background: #f5fff5;
+}
+
+.bracket-item.bracket-rejected {
+  border-color: #dc3545;
+  background: #fff5f5;
+  opacity: 0.7;
+}
+
+.bracket-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.bracket-proposal {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #FCD34D;
+}
+
+.bracket-statement {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #2c3e50;
+}
+
+.plaintiff-amount {
+  color: #F59E0B;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.defendant-amount {
+  color: #dc3545;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.bracket-explanation {
+  margin: 0 0 15px 0;
+  padding: 10px 15px;
+  background: #e3f2fd;
+  border-left: 3px solid #2196f3;
+  border-radius: 4px;
+  color: #1565c0;
+  font-size: 14px;
+}
+
+.bracket-ranges {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.range-section h5 {
+  margin: 0 0 10px 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  text-transform: uppercase;
+}
+
+.range-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.range-label {
+  font-weight: 700;
+  color: #1F2937;
+  font-size: 16px;
+  white-space: nowrap;
+}
+
+.range-connector {
+  flex: 1;
+  height: 4px;
+  background: linear-gradient(to right, #FCD34D, #FBBF24);
+  border-radius: 2px;
+  position: relative;
+}
+
+.range-connector::before,
+.range-connector::after {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #FCD34D;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.range-connector::before {
+  left: 0;
+}
+
+.range-connector::after {
+  right: 0;
+}
+
+.plaintiff-range .range-connector {
+  background: linear-gradient(to right, #dc3545, #c82333);
+}
+
+.plaintiff-range .range-connector::before,
+.plaintiff-range .range-connector::after {
+  background: #dc3545;
+}
+
+.defendant-range .range-connector {
+  background: linear-gradient(to right, #28a745, #218838);
+}
+
+.defendant-range .range-connector::before,
+.defendant-range .range-connector::after {
+  background: #28a745;
+}
+
+.bracket-notes {
+  background: #f9f9f9;
+  padding: 10px;
+  border-radius: 4px;
+  border-left: 3px solid #FCD34D;
+}
+
+.bracket-notes p {
+  margin: 0;
+  color: #555;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.bracket-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.status-badge.status-active {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.status-accepted {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.status-rejected {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.date-label {
+  color: #999;
+  font-size: 12px;
+}
+
+/* Radio group for proposer selection */
+.radio-group {
+  display: flex;
+  gap: 20px;
+  margin-top: 8px;
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.radio-label input[type="radio"] {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.radio-label span {
+  user-select: none;
+}
+
+/* Proposer badge styling */
+.bracket-header-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.proposer-badge {
+  padding: 6px 12px;
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.proposer-badge.proposer-plaintiff {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  color: #1e40af;
+  border: 1px solid #93c5fd;
+}
+
+.proposer-badge.proposer-defendant {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  color: #991b1b;
+  border: 1px solid #fca5a5;
+}
+
+/* Optional: Add subtle background color to bracket items based on proposer */
+.bracket-item.bracket-proposed-by-plaintiff {
+  border-left: 3px solid #3b82f6;
+}
+
+.bracket-item.bracket-proposed-by-defendant {
+  border-left: 3px solid #ef4444;
+}
+
+.bracket-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #eee;
+}
+
+.btn-sm {
+  padding: 6px 12px;
+  font-size: 12px;
+}
+
+.error-message {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  color: #721c24;
+  padding: 12px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.loading-message,
+.empty-message {
+  text-align: center;
+  color: #999;
+  padding: 30px;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .bracket-ranges {
+    grid-template-columns: 1fr;
+  }
+
+  .bracket-form .form-row {
+    grid-template-columns: 1fr;
+  }
+}
