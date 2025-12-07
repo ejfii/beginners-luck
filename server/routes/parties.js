@@ -4,6 +4,7 @@
 const express = require('express');
 const db = require('../database');
 const { verifyToken } = require('../middleware/auth');
+const { validateParty, sanitizeParty } = require('../validation');
 
 const router = express.Router();
 
@@ -54,30 +55,19 @@ router.get('/negotiations/:negotiationId/parties', (req, res) => {
  */
 router.post('/negotiations/:negotiationId/parties', (req, res) => {
   const { negotiationId } = req.params;
-  const { role, party_name, attorney_name, law_firm_name } = req.body;
 
-  if (isNaN(negotiationId)) {
-    return res.status(400).json({ error: 'Invalid negotiation ID' });
-  }
+  // Validate and sanitize input
+  const partyData = {
+    negotiation_id: negotiationId,
+    ...req.body
+  };
 
-  // Validation
-  const errors = [];
-  if (!role || !['plaintiff', 'defendant'].includes(role)) {
-    errors.push('Role is required and must be either "plaintiff" or "defendant"');
-  }
-  if (!party_name || typeof party_name !== 'string' || party_name.trim() === '') {
-    errors.push('Party name is required');
-  }
-  if (attorney_name && typeof attorney_name !== 'string') {
-    errors.push('Attorney name must be a string');
-  }
-  if (law_firm_name && typeof law_firm_name !== 'string') {
-    errors.push('Law firm name must be a string');
+  const validation = validateParty(partyData);
+  if (!validation.isValid) {
+    return res.status(400).json({ error: 'Validation failed', details: validation.errors });
   }
 
-  if (errors.length > 0) {
-    return res.status(400).json({ error: 'Validation failed', details: errors });
-  }
+  const sanitized = sanitizeParty(partyData);
 
   // Verify user owns this negotiation
   db.getNegotiationById(negotiationId, (err, negotiation) => {
@@ -94,16 +84,8 @@ router.post('/negotiations/:negotiationId/parties', (req, res) => {
       return res.status(403).json({ error: 'Unauthorized' });
     }
 
-    // Create the party
-    const partyData = {
-      negotiation_id: negotiationId,
-      role,
-      party_name: party_name.trim(),
-      attorney_name: attorney_name ? attorney_name.trim() : null,
-      law_firm_name: law_firm_name ? law_firm_name.trim() : null
-    };
-
-    db.createParty(partyData, (err, result) => {
+    // Create the party with sanitized data
+    db.createParty(sanitized, (err, result) => {
       if (err) {
         console.error('Error creating party:', err.message);
         return res.status(400).json({ error: err.message });
@@ -119,7 +101,6 @@ router.post('/negotiations/:negotiationId/parties', (req, res) => {
  */
 router.put('/parties/:id', (req, res) => {
   const { id } = req.params;
-  const { party_name, attorney_name, law_firm_name } = req.body;
 
   if (isNaN(id)) {
     return res.status(400).json({ error: 'Invalid party ID' });
@@ -147,19 +128,30 @@ router.put('/parties/:id', (req, res) => {
         return res.status(403).json({ error: 'Unauthorized' });
       }
 
-      // Build updates object
+      // Merge existing party data with updates for validation
+      const partyData = {
+        negotiation_id: party.negotiation_id,
+        role: party.role,
+        party_name: req.body.party_name !== undefined ? req.body.party_name : party.party_name,
+        attorney_name: req.body.attorney_name !== undefined ? req.body.attorney_name : party.attorney_name,
+        law_firm_name: req.body.law_firm_name !== undefined ? req.body.law_firm_name : party.law_firm_name
+      };
+
+      const validation = validateParty(partyData);
+      if (!validation.isValid) {
+        return res.status(400).json({ error: 'Validation failed', details: validation.errors });
+      }
+
+      const sanitized = sanitizeParty(partyData);
+
+      // Build updates object (only fields that were actually provided in request)
       const updates = {};
-      if (party_name !== undefined) updates.party_name = party_name.trim();
-      if (attorney_name !== undefined) updates.attorney_name = attorney_name ? attorney_name.trim() : null;
-      if (law_firm_name !== undefined) updates.law_firm_name = law_firm_name ? law_firm_name.trim() : null;
+      if (req.body.party_name !== undefined) updates.party_name = sanitized.party_name;
+      if (req.body.attorney_name !== undefined) updates.attorney_name = sanitized.attorney_name;
+      if (req.body.law_firm_name !== undefined) updates.law_firm_name = sanitized.law_firm_name;
 
       if (Object.keys(updates).length === 0) {
         return res.status(400).json({ error: 'No fields to update' });
-      }
-
-      // Validation
-      if (updates.party_name && updates.party_name === '') {
-        return res.status(400).json({ error: 'Party name cannot be empty' });
       }
 
       db.updateParty(id, updates, (err, result) => {

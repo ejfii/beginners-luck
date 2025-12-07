@@ -1,0 +1,13 @@
+/* ErrorMessage Component Styles */
+.error-message {
+  color: #d32f2f;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.error-message::before {
+  content: '⚠ ';
+  margin-right: 0.25rem;
+}

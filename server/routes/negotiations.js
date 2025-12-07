@@ -272,30 +272,38 @@ router.get('/:id/export', (req, res) => {
     }
 
     // Fetch all related data
-    db.getMovesByNegotiationId(id, (err, moves) => {
+    db.getPartiesByNegotiationId(id, (err, parties) => {
       if (err) {
-        console.error('Error fetching moves for export:', err.message);
+        console.error('Error fetching parties for export:', err.message);
         return res.status(500).json({ error: 'Failed to export negotiation data' });
       }
 
-      db.getBracketsByNegotiationId(id, (err, brackets) => {
+      db.getMovesByNegotiationId(id, (err, moves) => {
         if (err) {
-          console.error('Error fetching brackets for export:', err.message);
+          console.error('Error fetching moves for export:', err.message);
           return res.status(500).json({ error: 'Failed to export negotiation data' });
         }
 
-        db.getMediatorProposal(id, (err, mediatorProposal) => {
+        db.getBracketsByNegotiationId(id, (err, brackets) => {
           if (err) {
-            console.error('Error fetching mediator proposal for export:', err.message);
+            console.error('Error fetching brackets for export:', err.message);
             return res.status(500).json({ error: 'Failed to export negotiation data' });
           }
 
-          // Return complete negotiation export
-          res.json({
-            negotiation,
-            moves: moves || [],
-            brackets: brackets || [],
-            mediatorProposal: mediatorProposal || null
+          db.getMediatorProposal(id, (err, mediatorProposal) => {
+            if (err) {
+              console.error('Error fetching mediator proposal for export:', err.message);
+              return res.status(500).json({ error: 'Failed to export negotiation data' });
+            }
+
+            // Return complete negotiation export
+            res.json({
+              negotiation,
+              parties: parties || [],
+              moves: moves || [],
+              brackets: brackets || [],
+              mediatorProposal: mediatorProposal || null
+            });
           });
         });
       });

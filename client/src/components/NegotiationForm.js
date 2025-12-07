@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
 import '../styles/NegotiationForm.css';
+import { 
+  validateRequired, 
+  validateMoneyAmount, 
+  validateStringLength,
+  VALIDATION_CONSTANTS 
+} from '../utils/validation';
+import ErrorMessage from './ErrorMessage';
 
 function NegotiationForm({ onSubmit }) {
   const [formData, setFormData] = useState({
@@ -80,13 +87,39 @@ function NegotiationForm({ onSubmit }) {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.name.trim()) newErrors.name = 'Case name is required';
+    
+    // Required fields
+    const nameError = validateRequired(formData.name, 'Case name');
+    if (nameError) newErrors.name = nameError;
+    
+    const nameLengthError = validateStringLength(formData.name, VALIDATION_CONSTANTS.MAX_STRING_LENGTH, 'Case name');
+    if (nameLengthError) newErrors.name = nameLengthError;
     
     // Validate at least one plaintiff has a party name
     const validPlaintiffs = plaintiffs.filter(p => p.party_name.trim());
     if (validPlaintiffs.length === 0) {
       newErrors.plaintiffs = 'At least one plaintiff name is required';
     }
+    
+    // Validate money amounts if provided
+    const moneyFields = [
+      { field: 'past_medical_bills', value: formData.past_medical_bills },
+      { field: 'future_medical_bills', value: formData.future_medical_bills },
+      { field: 'lcp', value: formData.lcp },
+      { field: 'lost_wages', value: formData.lost_wages },
+      { field: 'loss_earning_capacity', value: formData.loss_earning_capacity },
+      { field: 'settlement_goal', value: formData.settlement_goal },
+      { field: 'primary_coverage_limit', value: formData.primary_coverage_limit },
+      { field: 'umbrella_coverage_limit', value: formData.umbrella_coverage_limit },
+      { field: 'uim_coverage_limit', value: formData.uim_coverage_limit }
+    ];
+    
+    moneyFields.forEach(({ field, value }) => {
+      if (value && value !== 0 && value !== '') {
+        const error = validateMoneyAmount(value);
+        if (error) newErrors[field] = error;
+      }
+    });
     
     return newErrors;
   };
@@ -154,12 +187,12 @@ function NegotiationForm({ onSubmit }) {
             onChange={handleChange}
             className={errors.name ? 'error' : ''}
           />
-          {errors.name && <span className="error-text">{errors.name}</span>}
+          <ErrorMessage error={errors.name} />
         </div>
       </div>
 
       <h4>Plaintiffs</h4>
-      {errors.plaintiffs && <span className="error-text">{errors.plaintiffs}</span>}
+      <ErrorMessage error={errors.plaintiffs} />
       {plaintiffs.map((plaintiff, index) => (
         <div key={index} className="party-group">
           <div className="form-row">
