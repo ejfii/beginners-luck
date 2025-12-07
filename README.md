@@ -4,14 +4,40 @@ A full-stack web application for managing civil settlement negotiations with rea
 
 ## Features
 
+### Core Negotiation Tools
 - **Case Management**: Create and track civil settlement negotiations
 - **Offer Tracking**: Record demands and offers throughout the negotiation process
 - **Bracket Proposals**: Create alternative settlement ranges for plaintiff and defendant with visual range bars
 - **Mediator Proposals**: Submit time-limited settlement proposals with countdown timer and dual-party acceptance tracking
-- **Analytics Dashboard**: View convergence rates, momentum, and predicted settlement amounts
+- **Move Tracker**: Record and analyze negotiation moves (offers/demands)
+
+### Case Evaluation System ✨ NEW
+- **Damages Breakdown**: Track medical specials, economic damages, and non-economic damages
+- **Liability Assessment**: Apply liability percentage (0-100%) to calculate adjusted case value
+- **Settlement Range Projection**: Automatic calculation of 60-90% settlement range based on adjusted value
+- **Policy Limits Integration**: Cap projections at policy limits and track utilization
+- **Real-time Calculations**: Instant updates as evaluation data changes
+- **Smart Bracket Suggestions**: Bracket recommendations now prioritize evaluation data when available
+
+### Insurer & Adjuster Intelligence ✨ NEW
+- **Historical Analytics**: View past case statistics by insurer or adjuster
+- **Pattern Detection**: Automatically identify adjuster negotiation styles:
+  - Aggressive Negotiator (first move <40%)
+  - Quick Settler (avg duration <30 days)
+  - Policy Limits Comfortable (settlements >80% of limits)
+- **Strategy Insights**: AI-powered recommendations based on historical patterns
+- **Move Analysis**: Track first move percentages and negotiation tendencies
+
+### Analytics & Insights
+- **Enhanced Analytics Dashboard**: View both negotiation analytics and evaluation metrics
+- **Convergence Tracking**: Monitor convergence rates, momentum, and gap reduction
+- **Settlement Prediction**: AI-powered settlement amount prediction
+- **Evaluation vs Prediction**: Compare case evaluation with negotiation trajectory
+- **Policy Utilization**: Track how close settlements approach policy limits
+
+### Productivity Features
 - **Search & Filter**: Find cases by name, attorney, venue, or status
 - **Inline Editing**: Edit case details and injury descriptions directly from the UI
-- **Move Tracker**: Record and analyze negotiation moves (offers/demands)
 - **Professional PDF Export**: Generate detailed negotiation reports with code-split libraries
 - **Responsive Design**: Works on desktop, tablet, and mobile devices
 - **User Authentication**: Secure login with JWT tokens and bcrypt password hashing
@@ -162,6 +188,14 @@ REACT_APP_API_BASE_URL=http://localhost:5001/api
 - `PUT /api/negotiations/:id/mediator-proposal` — Accept/reject as plaintiff or defendant
 - `POST /api/mediator-proposals/check-expired` — Utility endpoint to mark expired proposals
 
+### Insurer & Adjuster Intelligence ✨ NEW
+- `GET /api/analytics/insurer/:insurerName` — Get historical analytics for a specific insurer
+  - Returns: case count, avg settlement, settlement rate, avg duration, avg policy limits, avg moves
+  - Includes list of past cases with this insurer
+- `GET /api/analytics/adjuster/:adjusterName` — Get historical analytics and pattern detection for an adjuster
+  - Returns: negotiation style patterns (aggressive, quick settler, policy comfortable)
+  - Includes: avg first move percentage, strategy insights, past cases with move analysis
+
 ### Data Export & Backup
 - `GET /api/negotiations/:id/export` — Export complete negotiation with all related data (moves, brackets, mediator proposal) for backup or debugging
 
@@ -306,13 +340,42 @@ negotiation-engine/
 - Tracks party and move type
 - Real-time analytics recalculation
 
-### BracketProposals (NEW)
+### EvaluationPanel ✨ NEW
+- **Add Case Evaluation**: Enter medical specials, economic/non-economic damages
+- **Liability Assessment**: Set liability percentage (0-100%) using slider or input
+- **Real-time Calculations**: Automatically calculates:
+  - Total Damages (sum of all damage categories)
+  - Adjusted Case Value (total damages × liability %)
+  - Projected Settlement Range (60-90% of adjusted value)
+- **Policy Limits**: Cap projections at policy limits
+- **Visual Range Bar**: See settlement range with low/high markers
+- **Evaluation Notes**: Add context and reasoning for evaluation
+- **Edit Mode**: Click "Add Evaluation" or "Edit" to modify, "Save" to persist
+
+### InsurerHistory ✨ NEW
+- **Tabbed Interface**: Switch between Insurer and Adjuster analytics
+- **Insurer Tab**: View historical statistics for the primary insurer
+  - Case count and status breakdown
+  - Avg settlement amount, settlement rate, avg duration
+  - Avg policy limits and moves per case
+  - List of past cases with this insurer
+- **Adjuster Tab**: Analyze negotiation patterns for the adjuster
+  - **Pattern Badges**: Visual indicators for detected styles
+    - Aggressive Negotiator (first move <40%)
+    - Quick Settler (avg duration <30 days)
+    - Policy Limits Comfortable (settlements >80% of limit)
+  - **Strategy Insights**: AI-powered recommendations based on patterns
+  - **Move Analysis**: First move percentages and negotiation tendencies
+  - List of past cases with move-by-move analysis
+
+### BracketProposals
 - Create alternative settlement ranges for plaintiff and defendant
 - Visual range bars with gradient connectors
 - Accept/reject bracket proposals
 - Color-coded ranges (plaintiff: red, defendant: green)
 - Status badges (active/accepted/rejected)
 - Range validation (low < high)
+- **Smart Suggestions**: Now prioritizes evaluation data when available
 
 ### MediatorProposal (NEW)
 - Submit time-limited settlement proposals
@@ -323,11 +386,24 @@ negotiation-engine/
 - Automatic expiration detection
 - Deadline validation (must be future date)
 
-### AnalyticsDashboard
-- Convergence rate (percentage toward settlement)
-- Momentum (rate of convergence)
-- Predicted settlement amount
-- Confidence score
+### AnalyticsDashboard ✨ ENHANCED
+- **Case Evaluation Metrics Section** (NEW):
+  - Total Damages breakdown
+  - Liability Factor percentage
+  - Adjusted Case Value (highlighted)
+  - Projected Settlement Range (60-90% of adjusted value)
+  - Policy Limit with utilization percentage
+  - Warning badges when near policy limit (>80%)
+- **Negotiation Analytics Section**:
+  - Current Midpoint and Midpoint of Midpoints
+  - Momentum (rate of convergence) with color coding
+  - Convergence Rate (gap reduction progress)
+  - Predicted Settlement amount
+  - Confidence Score with reliability indicator
+- **Evaluation vs Prediction Comparison** (NEW):
+  - Visual comparison of predicted settlement vs evaluation range
+  - Success/Warning/Info indicators
+  - Strategic recommendations based on alignment
 
 ### SearchFilter
 - Text search by case name, attorney names, mediator

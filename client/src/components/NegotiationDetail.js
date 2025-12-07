@@ -618,7 +618,7 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
 
       <MediatorProposal negotiationId={negotiation.id} token={token} />
 
-      <AnalyticsDashboard analytics={negotiation.analytics} moves={negotiation.moves} />
+      <AnalyticsDashboard analytics={negotiation.analytics} moves={negotiation.moves} negotiation={negotiation} />
     </div>
   );
 }
