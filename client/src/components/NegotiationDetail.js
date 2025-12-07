@@ -6,6 +6,7 @@ import Toast from './Toast';
 import BracketProposals from './BracketProposals';
 import MediatorProposal from './MediatorProposal';
 import EvaluationPanel from './EvaluationPanel';
+import InsurerHistory from './InsurerHistory';
 import '../styles/NegotiationDetail.css';
 
 function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenMediationView, token }) {
@@ -604,6 +605,11 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
         onUpdate={() => {
           onRefresh();
         }}
+      />
+
+      <InsurerHistory 
+        negotiation={negotiation} 
+        token={token} 
       />
 
       <MoveTracker negotiation={negotiation} onRefresh={onRefresh} token={token} />

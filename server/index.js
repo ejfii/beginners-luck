@@ -12,6 +12,7 @@ const movesRouter = require('./routes/moves');
 const searchRouter = require('./routes/search');
 const bracketsRouter = require('./routes/brackets');
 const mediatorRouter = require('./routes/mediator');
+const analyticsRouter = require('./routes/analytics');
 
 // Initialize database
 db.initializeDatabase();
@@ -40,7 +41,7 @@ app.use('/api/negotiations', bracketsRouter);
 app.use('/api/negotiations', mediatorRouter);
 app.use('/api/moves', movesRouter);
 app.use('/api/search', searchRouter);
-app.use('/api/analytics', searchRouter); // Reuse search router for analytics
+app.use('/api/analytics', analyticsRouter); // Insurer and adjuster analytics
 app.use('/api/brackets', bracketsRouter); // For direct bracket updates
 app.use('/api/mediator-proposals', mediatorRouter); // For utility endpoints
 
