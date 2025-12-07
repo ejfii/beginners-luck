@@ -5,6 +5,8 @@ import PdfExport from './PdfExport';
 import Toast from './Toast';
 import BracketProposals from './BracketProposals';
 import MediatorProposal from './MediatorProposal';
+import EvaluationPanel from './EvaluationPanel';
+import InsurerHistory from './InsurerHistory';
 import '../styles/NegotiationDetail.css';
 
 function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenMediationView, token }) {
@@ -595,6 +597,19 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
         type={toast.type}
         visible={toast.visible}
         onClose={() => setToast({ ...toast, visible: false })}
+      />
+
+      <EvaluationPanel 
+        negotiation={negotiation} 
+        token={token} 
+        onUpdate={() => {
+          onRefresh();
+        }}
+      />
+
+      <InsurerHistory 
+        negotiation={negotiation} 
+        token={token} 
       />
 
       <MoveTracker negotiation={negotiation} onRefresh={onRefresh} token={token} />
