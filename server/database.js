@@ -120,6 +120,12 @@ function initializeDatabase(callback) {
         deleted_at TEXT,
         settlement_goal REAL,
         notes TEXT,
+        medical_specials REAL,
+        economic_damages REAL,
+        non_economic_damages REAL,
+        policy_limits REAL,
+        liability_percentage REAL,
+        evaluation_notes TEXT,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         UNIQUE(user_id, name)
       )
@@ -145,7 +151,14 @@ function initializeDatabase(callback) {
             { name: 'uim_coverage_limit', type: 'REAL' },
             { name: 'uim_insurer_name', type: 'TEXT' },
             { name: 'uim_adjuster_name', type: 'TEXT' },
-            { name: 'deleted_at', type: 'TEXT' }
+            { name: 'deleted_at', type: 'TEXT' },
+            // Evaluation fields
+            { name: 'medical_specials', type: 'REAL' },
+            { name: 'economic_damages', type: 'REAL' },
+            { name: 'non_economic_damages', type: 'REAL' },
+            { name: 'policy_limits', type: 'REAL' },
+            { name: 'liability_percentage', type: 'REAL' },
+            { name: 'evaluation_notes', type: 'TEXT' }
           ];
           
           newColumns.forEach(col => {

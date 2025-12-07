@@ -68,7 +68,8 @@ function validateNegotiationUpdate(data) {
 
   // Only validate numeric fields if they're being updated
   const numericFields = ['past_medical_bills', 'future_medical_bills', 'lcp', 'lost_wages', 'loss_earning_capacity',
-    'primary_coverage_limit', 'umbrella_coverage_limit', 'uim_coverage_limit'];
+    'primary_coverage_limit', 'umbrella_coverage_limit', 'uim_coverage_limit',
+    'medical_specials', 'economic_damages', 'non_economic_damages', 'policy_limits'];
   for (const field of numericFields) {
     if (data[field] !== undefined && data[field] !== null && data[field] !== '') {
       const val = parseFloat(data[field]);
@@ -78,10 +79,18 @@ function validateNegotiationUpdate(data) {
     }
   }
 
+  // Validate liability percentage (0-100) if being updated
+  if (data.liability_percentage !== undefined && data.liability_percentage !== null && data.liability_percentage !== '') {
+    const val = parseFloat(data.liability_percentage);
+    if (isNaN(val) || val < 0 || val > 100) {
+      errors.push('liability_percentage must be between 0 and 100');
+    }
+  }
+
   // Only validate string fields if they're being updated
   const stringFields = ['plaintiff_attorney', 'defendant_attorney', 'mediator', 'venue', 'judge', 'coverage', 'defendant_type', 'injury_description',
     'primary_insurer_name', 'primary_adjuster_name', 'umbrella_insurer_name', 'umbrella_adjuster_name',
-    'uim_insurer_name', 'uim_adjuster_name'];
+    'uim_insurer_name', 'uim_adjuster_name', 'evaluation_notes'];
   for (const field of stringFields) {
     if (data[field] !== undefined && data[field] !== null) {
       if (typeof data[field] !== 'string') {
@@ -119,7 +128,8 @@ function validateNegotiation(data) {
 
   // Optional fields validation
   const numericFields = ['past_medical_bills', 'future_medical_bills', 'lcp', 'lost_wages', 'loss_earning_capacity',
-    'primary_coverage_limit', 'umbrella_coverage_limit', 'uim_coverage_limit'];
+    'primary_coverage_limit', 'umbrella_coverage_limit', 'uim_coverage_limit',
+    'medical_specials', 'economic_damages', 'non_economic_damages', 'policy_limits'];
   for (const field of numericFields) {
     if (data[field] !== undefined && data[field] !== null && data[field] !== '') {
       const val = parseFloat(data[field]);
@@ -129,9 +139,17 @@ function validateNegotiation(data) {
     }
   }
 
+  // Validate liability percentage (0-100)
+  if (data.liability_percentage !== undefined && data.liability_percentage !== null && data.liability_percentage !== '') {
+    const val = parseFloat(data.liability_percentage);
+    if (isNaN(val) || val < 0 || val > 100) {
+      errors.push('liability_percentage must be between 0 and 100');
+    }
+  }
+
   const stringFields = ['plaintiff_attorney', 'defendant_attorney', 'mediator', 'venue', 'judge', 'coverage', 'defendant_type', 'injury_description',
     'primary_insurer_name', 'primary_adjuster_name', 'umbrella_insurer_name', 'umbrella_adjuster_name',
-    'uim_insurer_name', 'uim_adjuster_name'];
+    'uim_insurer_name', 'uim_adjuster_name', 'evaluation_notes'];
   for (const field of stringFields) {
     if (data[field] && typeof data[field] !== 'string') {
       errors.push(`${field} must be a string`);
@@ -234,7 +252,14 @@ function sanitizeNegotiation(data) {
     lcp: parseFloat(data.lcp) || 0,
     lost_wages: parseFloat(data.lost_wages) || 0,
     loss_earning_capacity: parseFloat(data.loss_earning_capacity) || 0,
-    status: data.status || 'active'
+    status: data.status || 'active',
+    // Evaluation fields
+    medical_specials: parseFloat(data.medical_specials) || null,
+    economic_damages: parseFloat(data.economic_damages) || null,
+    non_economic_damages: parseFloat(data.non_economic_damages) || null,
+    policy_limits: parseFloat(data.policy_limits) || null,
+    liability_percentage: parseFloat(data.liability_percentage) || null,
+    evaluation_notes: data.evaluation_notes ? sanitizeString(data.evaluation_notes) : ''
   };
 }
 
