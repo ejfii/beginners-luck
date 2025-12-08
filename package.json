@@ -1,0 +1,27 @@
+{
+  "name": "negotiation-engine",
+  "version": "1.0.0",
+  "description": "A full-stack web application for managing civil settlement negotiations with real-time analytics, offer tracking, and settlement prediction.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "e2e": "playwright test",
+    "e2e:ui": "playwright test --ui",
+    "e2e:report": "playwright show-report"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ejfii/beginners-luck.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/ejfii/beginners-luck/issues"
+  },
+  "homepage": "https://github.com/ejfii/beginners-luck#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.57.0"
+  }
+}
