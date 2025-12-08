@@ -237,4 +237,54 @@ describe('Parties API', () => {
       expect(defendants[0].party_name).toBe('Defendant One');
     });
   });
+
+  describe('GET /api/negotiations/:id - Include parties in negotiation detail', () => {
+    beforeEach(async () => {
+      // Create test parties with attorney information
+      await request(app)
+        .post(`/api/negotiations/${negotiationId}/parties`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          role: 'plaintiff',
+          party_name: 'John Doe',
+          attorney_name: 'Jane Smith',
+          law_firm_name: 'Smith & Associates'
+        });
+
+      await request(app)
+        .post(`/api/negotiations/${negotiationId}/parties`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          role: 'defendant',
+          party_name: 'ABC Corporation',
+          attorney_name: 'Bob Johnson',
+          law_firm_name: 'Johnson Law Firm'
+        });
+    });
+
+    it('should include parties with attorney info in negotiation detail response', async () => {
+      const response = await request(app)
+        .get(`/api/negotiations/${negotiationId}`)
+        .set('Authorization', `Bearer ${authToken}`);
+
+      expect(response.status).toBe(200);
+      expect(response.body).toHaveProperty('parties');
+      expect(Array.isArray(response.body.parties)).toBe(true);
+      expect(response.body.parties).toHaveLength(2);
+
+      // Check plaintiff party
+      const plaintiff = response.body.parties.find(p => p.role === 'plaintiff');
+      expect(plaintiff).toBeDefined();
+      expect(plaintiff.party_name).toBe('John Doe');
+      expect(plaintiff.attorney_name).toBe('Jane Smith');
+      expect(plaintiff.law_firm_name).toBe('Smith &amp; Associates');
+
+      // Check defendant party
+      const defendant = response.body.parties.find(p => p.role === 'defendant');
+      expect(defendant).toBeDefined();
+      expect(defendant.party_name).toBe('ABC Corporation');
+      expect(defendant.attorney_name).toBe('Bob Johnson');
+      expect(defendant.law_firm_name).toBe('Johnson Law Firm');
+    });
+  });
 });

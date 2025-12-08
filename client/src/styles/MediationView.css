@@ -70,6 +70,7 @@
 }
 
 /* Sections */
+.parties-section,
 .case-facts,
 .move-timeline,
 .bracket-summary,
@@ -78,6 +79,7 @@
   page-break-inside: avoid;
 }
 
+.parties-section h3,
 .case-facts h3,
 .move-timeline h3,
 .bracket-summary h3,
@@ -87,6 +89,62 @@
   margin: 0 0 1rem 0;
   padding-bottom: 0.5rem;
   border-bottom: 2px solid #FCD34D;
+}
+
+/* Parties Grid */
+.parties-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.party-group {
+  padding: 1.25rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+}
+
+.party-group-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.1rem;
+  color: #1F2937;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.party-info {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.party-info:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.party-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.35rem;
+}
+
+.attorney-info {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+.attorney-label {
+  font-weight: 600;
+  color: #666;
+}
+
+.firm-name {
+  color: #777;
 }
 
 /* Facts Grid */

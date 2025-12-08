@@ -66,15 +66,15 @@ function validateNegotiationCreate(data) {
  * Validate negotiation update data (lenient - only validate fields that are being updated)
  */
 function validateNegotiationUpdate(data) {
-  const errors = [];
+  const errors = {};
 
   // Only validate name if it's being updated
   if (data.name !== undefined && data.name !== null) {
     if (typeof data.name !== 'string' || data.name.trim() === '') {
-      errors.push('Case name is required');
+      errors.name = 'Case name is required';
     }
     if (data.name && data.name.length > 255) {
-      errors.push('Case name must be less than 255 characters');
+      errors.name = 'Case name must be less than 255 characters';
     }
   }
 
@@ -86,7 +86,7 @@ function validateNegotiationUpdate(data) {
     if (data[field] !== undefined && data[field] !== null && data[field] !== '') {
       const val = parseFloat(data[field]);
       if (isNaN(val) || val < 0) {
-        errors.push(`${field} must be a valid positive number`);
+        errors[field] = `${field} must be a valid positive number`;
       }
     }
   }
@@ -96,6 +96,14 @@ function validateNegotiationUpdate(data) {
     const val = parseFloat(data.liability_percentage);
     if (isNaN(val) || val < 0 || val > 100) {
       errors.liability_percentage = 'liability_percentage must be between 0 and 100';
+    }
+  }
+
+  // Validate jury_damages_likelihood (0-100) if being updated
+  if (data.jury_damages_likelihood !== undefined && data.jury_damages_likelihood !== null && data.jury_damages_likelihood !== '') {
+    const val = parseFloat(data.jury_damages_likelihood);
+    if (isNaN(val) || val < 0 || val > 100) {
+      errors.jury_damages_likelihood = 'jury_damages_likelihood must be between 0 and 100';
     }
   }
 
@@ -290,7 +298,8 @@ function sanitizeNegotiation(data) {
     non_economic_damages: parseFloat(data.non_economic_damages) || null,
     policy_limits: parseFloat(data.policy_limits) || null,
     liability_percentage: parseFloat(data.liability_percentage) || null,
-    evaluation_notes: data.evaluation_notes ? sanitizeString(data.evaluation_notes) : ''
+    evaluation_notes: data.evaluation_notes ? sanitizeString(data.evaluation_notes) : '',
+    jury_damages_likelihood: parseFloat(data.jury_damages_likelihood) || null
   };
 }
 

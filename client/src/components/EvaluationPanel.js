@@ -15,6 +15,7 @@ function EvaluationPanel({ negotiation, token, onUpdate }) {
   const [nonEconomicDamages, setNonEconomicDamages] = useState(negotiation?.non_economic_damages || null);
   const [policyLimits, setPolicyLimits] = useState(negotiation?.policy_limits || null);
   const [liabilityPercentage, setLiabilityPercentage] = useState(negotiation?.liability_percentage || null);
+  const [juryDamagesLikelihood, setJuryDamagesLikelihood] = useState(negotiation?.jury_damages_likelihood || null);
   const [evaluationNotes, setEvaluationNotes] = useState(negotiation?.evaluation_notes || '');
   
   // Money input handlers
@@ -37,6 +38,7 @@ function EvaluationPanel({ negotiation, token, onUpdate }) {
       setNonEconomicDamages(negotiation.non_economic_damages || null);
       setPolicyLimits(negotiation.policy_limits || null);
       setLiabilityPercentage(negotiation.liability_percentage || null);
+      setJuryDamagesLikelihood(negotiation.jury_damages_likelihood || null);
       setEvaluationNotes(negotiation.evaluation_notes || '');
     }
   }, [negotiation]);
@@ -76,6 +78,7 @@ function EvaluationPanel({ negotiation, token, onUpdate }) {
         non_economic_damages: nonEconomicDamages,
         policy_limits: policyLimits,
         liability_percentage: liabilityPercentage,
+        jury_damages_likelihood: juryDamagesLikelihood,
         evaluation_notes: evaluationNotes
       };
 
@@ -104,6 +107,7 @@ function EvaluationPanel({ negotiation, token, onUpdate }) {
     setNonEconomicDamages(negotiation?.non_economic_damages || null);
     setPolicyLimits(negotiation?.policy_limits || null);
     setLiabilityPercentage(negotiation?.liability_percentage || null);
+    setJuryDamagesLikelihood(negotiation?.jury_damages_likelihood || null);
     setEvaluationNotes(negotiation?.evaluation_notes || '');
     setIsEditing(false);
     setError(null);
@@ -111,7 +115,15 @@ function EvaluationPanel({ negotiation, token, onUpdate }) {
 
   const hasEvaluationData = () => {
     return medicalSpecials || economicDamages || nonEconomicDamages || 
-           policyLimits || liabilityPercentage || evaluationNotes;
+           policyLimits || liabilityPercentage || juryDamagesLikelihood || evaluationNotes;
+  };
+
+  const getJuryLikelihoodLabel = (percentage) => {
+    if (!percentage) return '';
+    const val = parseInt(percentage);
+    if (val <= 25) return 'Low likelihood';
+    if (val <= 60) return 'Moderate likelihood';
+    return 'High likelihood';
   };
 
   const totalDamages = calculateTotalDamages();
@@ -264,6 +276,46 @@ function EvaluationPanel({ negotiation, token, onUpdate }) {
               </div>
               {policyLimitsInput.error && <div className="input-error-msg">{policyLimitsInput.error}</div>}
 
+              <div className="form-row">
+                <label>Jury Damages Likelihood (%):</label>
+                {isEditing ? (
+                  <div className="liability-input-group">
+                    <input
+                      type="number"
+                      min="0"
+                      max="100"
+                      step="5"
+                      value={juryDamagesLikelihood || ''}
+                      onChange={(e) => setJuryDamagesLikelihood(e.target.value)}
+                      placeholder="0-100"
+                      className="liability-input"
+                    />
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="5"
+                      value={juryDamagesLikelihood || 50}
+                      onChange={(e) => setJuryDamagesLikelihood(e.target.value)}
+                      className="liability-slider"
+                    />
+                    {juryDamagesLikelihood && (
+                      <span className="percentage-label">
+                        {juryDamagesLikelihood}% - {getJuryLikelihoodLabel(juryDamagesLikelihood)}
+                      </span>
+                    )}
+                  </div>
+                ) : (
+                  <span className="value-display">
+                    {juryDamagesLikelihood ? (
+                      <>
+                        {juryDamagesLikelihood}% - {getJuryLikelihoodLabel(juryDamagesLikelihood)}
+                      </>
+                    ) : '—'}
+                  </span>
+                )}
+              </div>
+
               <div className="form-row total-row">
                 <label><strong>Adjusted Case Value:</strong></label>
                 <span className="value-display total-value">
@@ -289,6 +341,21 @@ function EvaluationPanel({ negotiation, token, onUpdate }) {
                     {policyLimits && adjustedValue * 0.9 > policyLimits && 
                       ' (capped by policy limits)'}
                   </p>
+                  {juryDamagesLikelihood && (
+                    <div className="jury-assessment">
+                      <h5>⚖️ Jury Damages Assessment</h5>
+                      <p className="jury-explanation">
+                        <strong>Likelihood jury awards claimed damages: {juryDamagesLikelihood}%</strong>
+                        <br />
+                        <span className="jury-risk-note">
+                          {getJuryLikelihoodLabel(juryDamagesLikelihood)} - Consider this when setting conservative settlement targets. 
+                          A {juryDamagesLikelihood}% likelihood suggests a jury-adjusted range of approximately{' '}
+                          {formatMoney(settlementRange.lowEnd * (juryDamagesLikelihood / 100))} to{' '}
+                          {formatMoney(settlementRange.highEnd * (juryDamagesLikelihood / 100))} in risk-averse scenarios.
+                        </span>
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

@@ -186,6 +186,14 @@
   transform: scale(1.1);
 }
 
+.percentage-label {
+  display: block;
+  margin-top: 8px;
+  font-size: 0.9rem;
+  color: #4b5563;
+  font-weight: 500;
+}
+
 /* Settlement Range */
 .settlement-range-section {
   background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
@@ -242,6 +250,40 @@
   font-size: 0.9rem;
   margin: 10px 0 0 0;
   font-weight: 500;
+}
+
+/* Jury Assessment */
+.jury-assessment {
+  margin-top: 20px;
+  padding: 15px;
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  border-radius: 6px;
+}
+
+.jury-assessment h5 {
+  margin: 0 0 10px 0;
+  color: #92400e;
+  font-size: 1rem;
+}
+
+.jury-explanation {
+  margin: 0;
+  color: #78350f;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.jury-explanation strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #92400e;
+}
+
+.jury-risk-note {
+  font-size: 0.9rem;
+  color: #a16207;
+  line-height: 1.5;
 }
 
 /* Evaluation Notes */

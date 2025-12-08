@@ -238,6 +238,50 @@ describe('Negotiations API', () => {
       expect(getResponse.body.status).toBe('settled');
       expect(getResponse.body.settlement_goal).toBe(100000);
     });
+
+    it('should update jury_damages_likelihood successfully', async () => {
+      const response = await request(app)
+        .put(`/api/negotiations/${negotiationId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          jury_damages_likelihood: 75
+        });
+
+      expect(response.status).toBe(200);
+
+      // Verify the field persists
+      const getResponse = await request(app)
+        .get(`/api/negotiations/${negotiationId}`)
+        .set('Authorization', `Bearer ${authToken}`);
+
+      expect(getResponse.body.jury_damages_likelihood).toBe(75);
+    });
+
+    it('should reject jury_damages_likelihood above 100', async () => {
+      const response = await request(app)
+        .put(`/api/negotiations/${negotiationId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          jury_damages_likelihood: 150
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Validation failed');
+      expect(response.body.details).toHaveProperty('jury_damages_likelihood');
+    });
+
+    it('should reject negative jury_damages_likelihood', async () => {
+      const response = await request(app)
+        .put(`/api/negotiations/${negotiationId}`)
+        .set('Authorization', `Bearer ${authToken}`)
+        .send({
+          jury_damages_likelihood: -10
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.error).toBe('Validation failed');
+      expect(response.body.details).toHaveProperty('jury_damages_likelihood');
+    });
   });
 
   describe('DELETE /api/negotiations/:id', () => {

@@ -126,6 +126,7 @@ function initializeDatabase(callback) {
         policy_limits REAL,
         liability_percentage REAL,
         evaluation_notes TEXT,
+        jury_damages_likelihood REAL,
         FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
         UNIQUE(user_id, name)
       )
@@ -158,7 +159,8 @@ function initializeDatabase(callback) {
             { name: 'non_economic_damages', type: 'REAL' },
             { name: 'policy_limits', type: 'REAL' },
             { name: 'liability_percentage', type: 'REAL' },
-            { name: 'evaluation_notes', type: 'TEXT' }
+            { name: 'evaluation_notes', type: 'TEXT' },
+            { name: 'jury_damages_likelihood', type: 'REAL' }
           ];
           
           newColumns.forEach(col => {

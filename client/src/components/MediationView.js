@@ -236,6 +236,47 @@ function MediationView({ negotiationId, negotiation, token, onClose }) {
           </div>
         </header>
 
+        {/* Parties Section */}
+        {data.negotiation.parties && data.negotiation.parties.length > 0 && (
+          <section className="parties-section" aria-labelledby="parties-heading">
+            <h3 id="parties-heading">Parties & Counsel</h3>
+            <div className="parties-grid">
+              {data.negotiation.parties.filter(p => p.role === 'plaintiff').length > 0 && (
+                <div className="party-group">
+                  <h4 className="party-group-title">Plaintiff{data.negotiation.parties.filter(p => p.role === 'plaintiff').length > 1 ? 's' : ''}</h4>
+                  {data.negotiation.parties.filter(p => p.role === 'plaintiff').map(party => (
+                    <div key={party.id} className="party-info">
+                      <div className="party-name">{party.party_name}</div>
+                      {party.attorney_name && (
+                        <div className="attorney-info">
+                          <span className="attorney-label">Attny:</span> {party.attorney_name}
+                          {party.law_firm_name && <span className="firm-name">, {party.law_firm_name}</span>}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+              {data.negotiation.parties.filter(p => p.role === 'defendant').length > 0 && (
+                <div className="party-group">
+                  <h4 className="party-group-title">Defendant{data.negotiation.parties.filter(p => p.role === 'defendant').length > 1 ? 's' : ''}</h4>
+                  {data.negotiation.parties.filter(p => p.role === 'defendant').map(party => (
+                    <div key={party.id} className="party-info">
+                      <div className="party-name">{party.party_name}</div>
+                      {party.attorney_name && (
+                        <div className="attorney-info">
+                          <span className="attorney-label">Attny:</span> {party.attorney_name}
+                          {party.law_firm_name && <span className="firm-name">, {party.law_firm_name}</span>}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </section>
+        )}
+
         {/* Key Case Facts */}
         <section className="case-facts" aria-labelledby="case-facts-heading">
           <h3 id="case-facts-heading">Case Facts</h3>
@@ -244,14 +285,18 @@ function MediationView({ negotiationId, negotiation, token, onClose }) {
               <label>Venue</label>
               <div className="fact-value">{neg.venue || 'Not specified'}</div>
             </div>
-            <div className="fact-item">
-              <label>Plaintiff Attorney</label>
-              <div className="fact-value">{neg.plaintiff_attorney || 'Not specified'}</div>
-            </div>
-            <div className="fact-item">
-              <label>Defendant Attorney</label>
-              <div className="fact-value">{neg.defendant_attorney || 'Not specified'}</div>
-            </div>
+            {(!data.negotiation.parties || data.negotiation.parties.length === 0) && (
+              <>
+                <div className="fact-item">
+                  <label>Plaintiff Attorney (Legacy)</label>
+                  <div className="fact-value">{neg.plaintiff_attorney || 'Not specified'}</div>
+                </div>
+                <div className="fact-item">
+                  <label>Defendant Attorney (Legacy)</label>
+                  <div className="fact-value">{neg.defendant_attorney || 'Not specified'}</div>
+                </div>
+              </>
+            )}
             <div className="fact-item">
               <label>Mediator</label>
               <div className="fact-value">{neg.mediator || 'Not assigned'}</div>
