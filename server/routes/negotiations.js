@@ -220,6 +220,53 @@ router.post('/:id/recommend', (req, res) => {
 });
 
 /**
+ * Update negotiation status
+ * PATCH /api/negotiations/:id/status
+ */
+router.patch('/:id/status', (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  if (isNaN(id)) {
+    return res.status(400).json({ error: 'Invalid negotiation ID' });
+  }
+
+  // Validate status
+  const validStatuses = ['draft', 'active', 'in_mediation', 'settled', 'closed'];
+  if (!status || !validStatuses.includes(status)) {
+    return res.status(400).json({ 
+      error: 'Invalid status', 
+      validStatuses 
+    });
+  }
+
+  // Verify user owns this negotiation
+  db.getNegotiationById(id, (err, negotiation) => {
+    if (err || !negotiation) {
+      return res.status(404).json({ error: 'Negotiation not found' });
+    }
+
+    if (negotiation.user_id !== req.userId) {
+      return res.status(403).json({ error: 'Unauthorized' });
+    }
+
+    // Update the status
+    const updateData = { 
+      status,
+      updated_date: new Date().toISOString()
+    };
+
+    db.updateNegotiation(id, updateData, (err, result) => {
+      if (err) {
+        console.error('Error updating negotiation status:', err.message);
+        return res.status(500).json({ error: 'Failed to update status' });
+      }
+      res.json({ id: parseInt(id), status, updated_date: updateData.updated_date });
+    });
+  });
+});
+
+/**
  * Delete negotiation (soft delete)
  * DELETE /api/negotiations/:id
  */

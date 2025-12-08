@@ -14,6 +14,7 @@ const bracketsRouter = require('./routes/brackets');
 const mediatorRouter = require('./routes/mediator');
 const analyticsRouter = require('./routes/analytics');
 const templatesRouter = require('./routes/templates');
+const activityRouter = require('./routes/activity');
 
 // Initialize database
 db.initializeDatabase();
@@ -37,6 +38,7 @@ app.use('/api/auth', authRouter);
 
 // API Routes (protected by auth middleware in their respective files)
 app.use('/api/negotiations', negotiationsRouter);
+app.use('/api/negotiations', activityRouter); // Activity timeline
 app.use('/api', partiesRouter);
 app.use('/api/negotiations', bracketsRouter);
 app.use('/api/negotiations', mediatorRouter);

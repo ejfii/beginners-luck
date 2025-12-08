@@ -29,10 +29,48 @@
   text-transform: capitalize;
 }
 
+.status-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-selector label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #555;
+}
+
+.status-dropdown {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 2px solid #ddd;
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: capitalize;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.status-dropdown:hover {
+  border-color: #3498db;
+}
+
+.status-dropdown:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
 .status {
   padding: 4px 8px;
   border-radius: 4px;
   display: inline-block;
+}
+
+.status-draft {
+  background: #f0f0f0;
+  color: #666;
 }
 
 .status-active {
@@ -40,9 +78,19 @@
   color: #155724;
 }
 
+.status-in_mediation {
+  background: #fff3cd;
+  color: #856404;
+}
+
 .status-settled {
   background: #cfe2ff;
   color: #084298;
+}
+
+.status-closed {
+  background: #e0e0e0;
+  color: #555;
 }
 
 .detail-actions {

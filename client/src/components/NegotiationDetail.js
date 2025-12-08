@@ -7,6 +7,7 @@ import BracketProposals from './BracketProposals';
 import MediatorProposal from './MediatorProposal';
 import EvaluationPanel from './EvaluationPanel';
 import InsurerHistory from './InsurerHistory';
+import ActivityTimeline from './ActivityTimeline';
 import '../styles/NegotiationDetail.css';
 
 function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenMediationView, token }) {
@@ -150,7 +151,21 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
       <div className="detail-header">
         <div>
           <h2>{negotiation.name}</h2>
-          <p className={`status status-${negotiation.status}`}>Status: {negotiation.status}</p>
+          <div className="status-selector">
+            <label htmlFor="status-dropdown">Status:</label>
+            <select
+              id="status-dropdown"
+              value={negotiation.status || 'active'}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              className={`status-dropdown status-${negotiation.status}`}
+            >
+              <option value="draft">Draft</option>
+              <option value="active">Active</option>
+              <option value="in_mediation">In Mediation</option>
+              <option value="settled">Settled</option>
+              <option value="closed">Closed</option>
+            </select>
+          </div>
         </div>
         <div className="detail-actions">
           <button
@@ -689,6 +704,8 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
       <BracketProposals negotiationId={negotiation.id} token={token} />
 
       <MediatorProposal negotiationId={negotiation.id} token={token} />
+
+      <ActivityTimeline negotiationId={negotiation.id} />
 
       <AnalyticsDashboard analytics={negotiation.analytics} moves={negotiation.moves} negotiation={negotiation} />
 
