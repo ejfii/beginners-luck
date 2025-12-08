@@ -31,10 +31,6 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
 
   const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || 'http://localhost:5001/api';
 
-  const getAxiosConfig = () => ({
-    headers: { Authorization: `Bearer ${token}` }
-  });
-
   const handleSaveAsTemplate = () => {
     setTemplateName(`Template: ${negotiation.name}`);
     setTemplateDescription('');
@@ -702,7 +698,7 @@ function NegotiationDetail({ negotiation, onUpdate, onDelete, onRefresh, onOpenM
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Save as Template</h3>
             <p className="modal-subtitle">
-              Create a reusable template from this case's configuration. The template will include parties, coverage details, and case type.
+              Create a reusable template from this case&apos;s configuration. The template will include parties, coverage details, and case type.
             </p>
             
             <form onSubmit={handleConfirmSaveTemplate}>
